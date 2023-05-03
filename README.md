@@ -1,70 +1,47 @@
-# Getting Started with Create React App
+### HOC
+In functional components, higher-order components (HOCs) are functions that take a component as an argument and return a new component with some additional functionality. The HOC can add props to the original component, modify the behavior of the component, or even completely replace it with a new one.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Here's an example of a HOC that adds a "hover" prop to a component that changes its background color when the mouse hovers over it:
 
-## Available Scripts
 
-In the project directory, you can run:
+import React, { useState } from "react";
 
-### `yarn start`
+function withHover(Component) {
+  return function WithHover(props) {
+    const [isHovering, setIsHovering] = useState(false);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    function handleMouseEnter() {
+      setIsHovering(true);
+    }
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    function handleMouseLeave() {
+      setIsHovering(false);
+    }
 
-### `yarn test`
+    return (
+      <div
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ backgroundColor: isHovering ? "yellow" : "white" }}
+      >
+        <Component {...props} hover={isHovering} />
+      </div>
+    );
+  };
+}
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This HOC takes a component as an argument and returns a new component (WithHover) that adds a hover prop to the original component. When the mouse hovers over the WithHover component, the isHovering state is set to true, which changes the background color. Finally, the Component is rendered with the hover prop passed down as a prop. The HOC can then be used like this:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+function Button({ text, hover }) {
+  return <button>{hover ? "Hovering!" : text}</button>;
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const HoverButton = withHover(Button);
 
-### `yarn eject`
+function App() {
+  return <HoverButton text="Click me!" />;
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+In this example, the Button component is wrapped with the withHover HOC to create the HoverButton component. The HoverButton component has a hover prop that is added by the withHover HOC and can be used to change its appearance when the mouse hovers over it.
